@@ -188,6 +188,7 @@ SrsTcpListener::SrsTcpListener(ISrsTcpHandler* h, string i, int p)
     _fd = -1;
     _stfd = NULL;
 
+    // ISrsReusableThreadHandler 就是当前类, 其他就是等于就是自己在跑了
     pthread = new SrsReusableThread("tcp", this);
 }
 
@@ -257,10 +258,12 @@ int SrsTcpListener::listen()
     return ret;
 }
 
+// 
 int SrsTcpListener::cycle()
 {
     int ret = ERROR_SUCCESS;
     
+    // 调用accecpt, 创建fd, 直接用线程来管理Listener
     st_netfd_t client_stfd = st_accept(_stfd, NULL, NULL, ST_UTIME_NO_TIMEOUT);
     
     if(client_stfd == NULL){
@@ -272,6 +275,7 @@ int SrsTcpListener::cycle()
     }
     srs_verbose("get a client. fd=%d", st_netfd_fileno(client_stfd));
     
+    // 通知生成了fd
     if ((ret = handler->on_tcp_client(client_stfd)) != ERROR_SUCCESS) {
         srs_warn("accept client error. ret=%d", ret);
         return ret;

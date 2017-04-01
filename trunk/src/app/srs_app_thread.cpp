@@ -95,6 +95,7 @@ namespace internal {
             return ret;
         }
         
+        // 创建结构
         if((tid = st_thread_create(thread_fun, this, (_joinable? 1:0), 0)) == NULL){
             ret = ERROR_ST_CREATE_CYCLE_THREAD;
             srs_error("st_thread_create failed. ret=%d", ret);
@@ -198,6 +199,7 @@ namespace internal {
         }
         
         while (loop) {
+            // 主要就是跑on_before_cycle, cycle, on_end_cycle三个事件。
             if ((ret = handler->on_before_cycle()) != ERROR_SUCCESS) {
                 srs_warn("thread %s on before cycle failed, ignored and retry, ret=%d", _name, ret);
                 goto failed;

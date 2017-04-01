@@ -148,8 +148,10 @@ int SrsStreamListener::listen(string i, int p)
     port = p;
 
     srs_freep(listener);
+    // 创建一个SrsTcpListener类
     listener = new SrsTcpListener(this, ip, port);
 
+    // 这里调用了socket的listen, 并且启动了一个线程
     if ((ret = listener->listen()) != ERROR_SUCCESS) {
         srs_error("tcp listen failed. ret=%d", ret);
         return ret;
